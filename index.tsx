@@ -49,8 +49,7 @@ class VoiceNotesApp {
 
   constructor() {
     this.genAI = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY!,
-      apiVersion: 'v1alpha',
+      apiKey: process.env.API_KEY!,
     });
 
     this.recordButton = document.getElementById(
@@ -554,17 +553,18 @@ class VoiceNotesApp {
     try {
       this.recordingStatus.textContent = 'Getting transcription...';
 
-      const contents = [
-        {text: 'Generate a complete, detailed transcript of this audio.'},
-        {inlineData: {mimeType: mimeType, data: base64Audio}},
-      ];
-
       const response = await this.genAI.models.generateContent({
         model: MODEL_NAME,
-        contents: contents,
+        contents: {
+          parts: [
+            {text: 'Generate a complete, detailed transcript of this audio.'},
+            {inlineData: {mimeType: mimeType, data: base64Audio}},
+          ],
+        },
       });
 
-      const transcriptionText = response.text;
+      // FIX: Await the response.text property to handle cases where it returns a promise.
+      const transcriptionText = await Promise.resolve(response.text);
 
       if (transcriptionText) {
         this.rawTranscription.textContent = transcriptionText;
@@ -631,11 +631,10 @@ class VoiceNotesApp {
 
                     Raw transcription:
                     ${this.rawTranscription.textContent}`;
-      const contents = [{text: prompt}];
 
       const response = await this.genAI.models.generateContent({
         model: MODEL_NAME,
-        contents: contents,
+        contents: prompt,
       });
       const polishedText = response.text;
 
