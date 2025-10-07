@@ -109,7 +109,7 @@ class VoiceNotesApp {
     this.initTheme();
     this.createNewNote();
 
-    this.recordingStatus.textContent = 'Ready to record';
+    this.recordingStatus.textContent = 'Listo para grabar';
   }
 
   private bindEventListeners(): void {
@@ -303,11 +303,11 @@ class VoiceNotesApp {
 
     const currentTitle = this.editorTitle.textContent?.trim();
     const placeholder =
-      this.editorTitle.getAttribute('placeholder') || 'Untitled Note';
+      this.editorTitle.getAttribute('placeholder') || 'Nota sin título';
     this.liveRecordingTitle.textContent =
       currentTitle && currentTitle !== placeholder
         ? currentTitle
-        : 'New Recording';
+        : 'Nueva Grabación';
 
     this.setupAudioVisualizer();
     this.drawLiveWaveform();
@@ -386,7 +386,7 @@ class VoiceNotesApp {
         this.audioContext = null;
       }
 
-      this.recordingStatus.textContent = 'Requesting microphone access...';
+      this.recordingStatus.textContent = 'Solicitando acceso al micrófono...';
 
       try {
         this.stream = await navigator.mediaDevices.getUserMedia({audio: true});
@@ -424,11 +424,11 @@ class VoiceNotesApp {
           });
           this.processAudio(audioBlob).catch((err) => {
             console.error('Error processing audio:', err);
-            this.recordingStatus.textContent = 'Error processing recording';
+            this.recordingStatus.textContent = 'Error al procesar la grabación';
           });
         } else {
           this.recordingStatus.textContent =
-            'No audio data captured. Please try again.';
+            'No se capturaron datos de audio. Por favor, inténtalo de nuevo.';
         }
 
         if (this.stream) {
@@ -443,7 +443,7 @@ class VoiceNotesApp {
       this.isRecording = true;
 
       this.recordButton.classList.add('recording');
-      this.recordButton.setAttribute('title', 'Stop Recording');
+      this.recordButton.setAttribute('title', 'Detener Grabación');
 
       this.startLiveDisplay();
     } catch (error) {
@@ -457,14 +457,14 @@ class VoiceNotesApp {
         errorName === 'PermissionDeniedError'
       ) {
         this.recordingStatus.textContent =
-          'Microphone permission denied. Please check browser settings and reload page.';
+          'Permiso de micrófono denegado. Por favor, revisa la configuración del navegador y recarga la página.';
       } else if (
         errorName === 'NotFoundError' ||
         (errorName === 'DOMException' &&
           errorMessage.includes('Requested device not found'))
       ) {
         this.recordingStatus.textContent =
-          'No microphone found. Please connect a microphone.';
+          'No se encontró micrófono. Por favor, conecta un micrófono.';
       } else if (
         errorName === 'NotReadableError' ||
         errorName === 'AbortError' ||
@@ -472,7 +472,7 @@ class VoiceNotesApp {
           errorMessage.includes('Failed to allocate audiosource'))
       ) {
         this.recordingStatus.textContent =
-          'Cannot access microphone. It may be in use by another application.';
+          'No se puede acceder al micrófono. Puede que esté en uso por otra aplicación.';
       } else {
         this.recordingStatus.textContent = `Error: ${errorMessage}`;
       }
@@ -483,7 +483,7 @@ class VoiceNotesApp {
         this.stream = null;
       }
       this.recordButton.classList.remove('recording');
-      this.recordButton.setAttribute('title', 'Start Recording');
+      this.recordButton.setAttribute('title', 'Iniciar Grabación');
       this.stopLiveDisplay();
     }
   }
@@ -500,8 +500,8 @@ class VoiceNotesApp {
       this.isRecording = false;
 
       this.recordButton.classList.remove('recording');
-      this.recordButton.setAttribute('title', 'Start Recording');
-      this.recordingStatus.textContent = 'Processing audio...';
+      this.recordButton.setAttribute('title', 'Iniciar Grabación');
+      this.recordingStatus.textContent = 'Procesando audio...';
     } else {
       if (!this.isRecording) this.stopLiveDisplay();
     }
@@ -510,14 +510,14 @@ class VoiceNotesApp {
   private async processAudio(audioBlob: Blob): Promise<void> {
     if (audioBlob.size === 0) {
       this.recordingStatus.textContent =
-        'No audio data captured. Please try again.';
+        'No se capturaron datos de audio. Por favor, inténtalo de nuevo.';
       return;
     }
 
     try {
       URL.createObjectURL(audioBlob);
 
-      this.recordingStatus.textContent = 'Converting audio...';
+      this.recordingStatus.textContent = 'Convirtiendo audio...';
 
       const reader = new FileReader();
       const readResult = new Promise<string>((resolve, reject) => {
@@ -542,7 +542,7 @@ class VoiceNotesApp {
     } catch (error) {
       console.error('Error in processAudio:', error);
       this.recordingStatus.textContent =
-        'Error processing recording. Please try again.';
+        'Error al procesar la grabación. Por favor, inténtalo de nuevo.';
     }
   }
 
@@ -551,7 +551,7 @@ class VoiceNotesApp {
     mimeType: string,
   ): Promise<void> {
     try {
-      this.recordingStatus.textContent = 'Getting transcription...';
+      this.recordingStatus.textContent = 'Obteniendo transcripción...';
 
       const response = await this.genAI.models.generateContent({
         model: MODEL_NAME,
@@ -580,17 +580,17 @@ class VoiceNotesApp {
         if (this.currentNote)
           this.currentNote.rawTranscription = transcriptionText;
         this.recordingStatus.textContent =
-          'Transcription complete. Polishing note...';
+          'Transcripción completa. Puliendo nota...';
         this.getPolishedNote().catch((err) => {
           console.error('Error polishing note:', err);
           this.recordingStatus.textContent =
-            'Error polishing note after transcription.';
+            'Error al pulir la nota después de la transcripción.';
         });
       } else {
         this.recordingStatus.textContent =
-          'Transcription failed or returned empty.';
+          'La transcripción falló o devolvió un resultado vacío.';
         this.polishedNote.innerHTML =
-          '<p><em>Could not transcribe audio. Please try again.</em></p>';
+          '<p><em>No se pudo transcribir el audio. Por favor, inténtalo de nuevo.</em></p>';
         this.rawTranscription.textContent =
           this.rawTranscription.getAttribute('placeholder');
         this.rawTranscription.classList.add('placeholder-active');
@@ -598,8 +598,8 @@ class VoiceNotesApp {
     } catch (error) {
       console.error('Error getting transcription:', error);
       this.recordingStatus.textContent =
-        'Error getting transcription. Please try again.';
-      this.polishedNote.innerHTML = `<p><em>Error during transcription: ${error instanceof Error ? error.message : String(error)}</em></p>`;
+        'Error al obtener la transcripción. Por favor, inténtalo de nuevo.';
+      this.polishedNote.innerHTML = `<p><em>Error durante la transcripción: ${error instanceof Error ? error.message : String(error)}</em></p>`;
       this.rawTranscription.textContent =
         this.rawTranscription.getAttribute('placeholder');
       this.rawTranscription.classList.add('placeholder-active');
@@ -613,16 +613,16 @@ class VoiceNotesApp {
         this.rawTranscription.textContent.trim() === '' ||
         this.rawTranscription.classList.contains('placeholder-active')
       ) {
-        this.recordingStatus.textContent = 'No transcription to polish';
+        this.recordingStatus.textContent = 'No hay transcripción para pulir';
         this.polishedNote.innerHTML =
-          '<p><em>No transcription available to polish.</em></p>';
+          '<p><em>No hay transcripción disponible para pulir.</em></p>';
         const placeholder = this.polishedNote.getAttribute('placeholder') || '';
         this.polishedNote.innerHTML = placeholder;
         this.polishedNote.classList.add('placeholder-active');
         return;
       }
 
-      this.recordingStatus.textContent = 'Polishing note...';
+      this.recordingStatus.textContent = 'Puliendo nota...';
 
       const prompt = `Take this raw transcription and create a polished, well-formatted note.
                     Remove filler words (um, uh, like), repetitions, and false starts.
@@ -691,7 +691,7 @@ class VoiceNotesApp {
         if (!noteTitleSet && this.editorTitle) {
           const currentEditorText = this.editorTitle.textContent?.trim();
           const placeholderText =
-            this.editorTitle.getAttribute('placeholder') || 'Untitled Note';
+            this.editorTitle.getAttribute('placeholder') || 'Nota sin título';
           if (
             currentEditorText === '' ||
             currentEditorText === placeholderText
@@ -705,12 +705,12 @@ class VoiceNotesApp {
 
         if (this.currentNote) this.currentNote.polishedNote = polishedText;
         this.recordingStatus.textContent =
-          'Note polished. Ready for next recording.';
+          'Nota pulida. Listo para grabar.';
       } else {
         this.recordingStatus.textContent =
-          'Polishing failed or returned empty.';
+          'El pulido falló o devolvió un resultado vacío.';
         this.polishedNote.innerHTML =
-          '<p><em>Polishing returned empty. Raw transcription is available.</em></p>';
+          '<p><em>El pulido devolvió un resultado vacío. La transcripción sin procesar está disponible.</em></p>';
         if (
           this.polishedNote.textContent?.trim() === '' ||
           this.polishedNote.innerHTML.includes('<em>Polishing returned empty')
@@ -724,8 +724,8 @@ class VoiceNotesApp {
     } catch (error) {
       console.error('Error polishing note:', error);
       this.recordingStatus.textContent =
-        'Error polishing note. Please try again.';
-      this.polishedNote.innerHTML = `<p><em>Error during polishing: ${error instanceof Error ? error.message : String(error)}</em></p>`;
+        'Error al pulir la nota. Por favor, inténtalo de nuevo.';
+      this.polishedNote.innerHTML = `<p><em>Error durante el pulido: ${error instanceof Error ? error.message : String(error)}</em></p>`;
       if (
         this.polishedNote.textContent?.trim() === '' ||
         this.polishedNote.innerHTML.includes('<em>Error during polishing')
@@ -757,11 +757,11 @@ class VoiceNotesApp {
 
     if (this.editorTitle) {
       const placeholder =
-        this.editorTitle.getAttribute('placeholder') || 'Untitled Note';
+        this.editorTitle.getAttribute('placeholder') || 'Nota sin título';
       this.editorTitle.textContent = placeholder;
       this.editorTitle.classList.add('placeholder-active');
     }
-    this.recordingStatus.textContent = 'Ready to record';
+    this.recordingStatus.textContent = 'Listo para grabar';
 
     if (this.isRecording) {
       this.mediaRecorder?.stop();

@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dictation App</title>
-    <link rel="stylesheet" href="/index.css">
+    <title>App de Dictado</title>
+    <link rel="stylesheet" href="./index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,13 +25,13 @@
       <div class="main-content">
         <div class="note-area">
           <div class="note-header">
-            <div class="editor-title" contenteditable="true" placeholder="Untitled Note">
-              Untitled Note
+            <div class="editor-title" contenteditable="true" placeholder="Nota sin título">
+              Nota sin título
             </div>
             <div class="tab-navigation-container">
               <div class="tab-navigation">
-                <button class="tab-button active" data-tab="note">Polished</button>
-                <button class="tab-button" data-tab="raw">Raw</button>
+                <button class="tab-button active" data-tab="note">Pulido</button>
+                <button class="tab-button" data-tab="raw">Crudo</button>
                 <div class="active-tab-indicator"></div>
               </div>
             </div>
@@ -42,20 +42,20 @@
               id="polishedNote"
               class="note-content active"
               contenteditable="true"
-              placeholder="Your polished notes will appear here..."
+              placeholder="Tus notas pulidas aparecerán aquí..."
             ></div>
             <div
               id="rawTranscription"
               class="note-content"
               contenteditable="true"
-              placeholder="Raw transcription will appear here..."
+              placeholder="La transcripción sin procesar aparecerá aquí..."
             ></div>
           </div>
         </div>
 
         <div class="recording-interface">
           <div id="liveRecordingTitle" class="live-recording-title" style="display: none">
-            Recording
+            Grabando
           </div>
           <canvas id="liveWaveformCanvas" style="display: none"></canvas>
           <div id="liveRecordingTimerDisplay" class="live-recording-timer" style="display: none">
@@ -63,15 +63,15 @@
           </div>
 
           <div class="status-indicator">
-            <span id="recordingStatus" class="status-text">Ready to record</span>
+            <span id="recordingStatus" class="status-text">Listo para grabar</span>
           </div>
 
           <div class="recording-controls">
-            <button class="action-button" id="themeToggleButton" title="Toggle Theme">
+            <button class="action-button" id="themeToggleButton" title="Cambiar Tema">
               <i class="fas fa-sun"></i>
             </button>
 
-            <button id="recordButton" class="record-button" title="Start/Stop Recording">
+            <button id="recordButton" class="record-button" title="Iniciar/Detener Grabación">
               <div class="record-button-inner">
                 <i class="fas fa-microphone"></i>
               </div>
@@ -80,10 +80,10 @@
                 <circle class="wave wave2" cx="100" cy="100" r="70" />
                 <circle class="wave wave3" cx="100" cy="100" r="100" />
               </svg>
-              <span class="record-text">Record</span>
+              <span class="record-text">Grabar</span>
             </button>
 
-            <button class="action-button" id="newButton" title="New Note / Clear">
+            <button class="action-button" id="newButton" title="Nota Nueva / Limpiar">
               <i class="fas fa-file"></i>
             </button>
           </div>
@@ -154,6 +154,6 @@
         });
       });
     </script>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
